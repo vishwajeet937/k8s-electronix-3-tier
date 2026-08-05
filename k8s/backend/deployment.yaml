@@ -2,82 +2,84 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
-  namespace: electronix
 spec:
   replicas: 1
+
   selector:
     matchLabels:
       app: backend
+
   template:
     metadata:
       labels:
         app: backend
+
     spec:
       nodeSelector:
-        kubernetes.io/hostname: worker-node-1
+        kubernetes.io/hostname: worker-node-electronics
+
       containers:
       - name: backend
-        image: vishwajeetkumar938/electronix-backend:1.0
+        image: vishwajeetkumar938/electronix-backend:1.1
         imagePullPolicy: Always
+
         ports:
         - containerPort: 5000
+
         env:
-        - name: DB_HOST
-          valueFrom:
-            configMapKeyRef:
-              name: electronix-config
-              key: DB_HOST
-        - name: DB_PORT
-          valueFrom:
-            configMapKeyRef:
-              name: electronix-config
-              key: DB_PORT
-        - name: DB_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: electronix-config
-              key: DB_NAME
-        - name: CLIENT_URL
-          valueFrom:
-            configMapKeyRef:
-              name: electronix-config
-              key: CLIENT_URL
+        - name: PORT
+          value: "5000"
+
         - name: NODE_ENV
-          valueFrom:
-            configMapKeyRef:
-              name: electronix-config
-              key: NODE_ENV
+          value: "production"
+
+        - name: CLIENT_URL
+          value: "http://16.112.226.249:30080"
+
+        - name: DB_HOST
+          value: "mysql"
+
+        - name: DB_PORT
+          value: "3306"
+
+        - name: DB_NAME
+          value: "ecommerce_db"
+
         - name: DB_USER
-          valueFrom:
-            secretKeyRef:
-              name: electronix-secret
-              key: DB_USER
+          value: "root"
+
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: electronix-secret
-              key: DB_PASSWORD
+              name: mysql-secret
+              key: MYSQL_ROOT_PASSWORD
+
+        - name: JWT_ACCESS_SECRET
+          value: "1562ff9b236644bcaa292c8d5c48b0d810ac621770860b768389b78f90f35b7e"
+
+        - name: JWT_REFRESH_SECRET
+          value: "6dbd672d6b017877336bad3fe44e5f32273924ae6fb82568d1fe94dd6177af5a"
+
+        - name: JWT_ACCESS_EXPIRES
+          value: "15m"
+
+        - name: JWT_REFRESH_EXPIRES
+          value: "7d"
+
         - name: SESSION_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: electronix-secret
-              key: SESSION_SECRET
+          value: "5tgd672d6b017877336bad3fe44e5f32273924ae6fb82568d1fe94dd6177a43f"
+
+        - name: RAZORPAY_KEY_ID
+          value: "rzp_test_SyKaQNK4TqmlLa"
+
+        - name: RAZORPAY_KEY_SECRET
+          value: "XiplJyrY0lQkO71KVpGJ7b46"
+
         resources:
           requests:
-            memory: "128Mi"
-            cpu: "100m"
-          limits:
+            cpu: "200m"
             memory: "256Mi"
-            cpu: "250m"
-        readinessProbe:
-          httpGet:
-            path: /api/health
-            port: 5000
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        livenessProbe:
-          httpGet:
-            path: /api/health
-            port: 5000
-          initialDelaySeconds: 60
-          periodSeconds: 15
+
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
