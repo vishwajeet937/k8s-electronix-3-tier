@@ -24,7 +24,7 @@ spec:
       containers:
       - name: frontend
 
-        image: divaypratap/electronix-frontend:v1
+        image: vishwajeetkumar938/electronix-frontend:1.0
 
         ports:
         - containerPort: 80
